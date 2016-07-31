@@ -14,7 +14,7 @@ local function sql2json( q )
     assert(db, 'Could not connect to DB')
     if db.count(q.tbname, q.clause) > 0 then
 	local ret = fd.reduce( db.query( q.QRY ), fd.map( asJSON ), fd.into, {} )
-	return string.format('Content-Type: text/plain; charset=iso-8859-1\r\n\r\n[%s]\n', table.concat(ret, ', '))
+	return string.format('Content-Type: text/plain; charset=utf-8\r\n\r\n[%s]\n', table.concat(ret, ', '))
     else
 	return 'Content-Type: text/plain\r\n\r\n[]\n'
     end
