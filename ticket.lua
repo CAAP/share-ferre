@@ -31,7 +31,7 @@ local ret = {'',
 	''}
 
 local function procesar(w)
-    ret[#ret+1] = w.desc
+    ret[#ret+1] = string.format('%38s', w.desc) -- w.desc
     ret[#ret+1] = campos{w.clave, w.qty, w.rea, w.prc:gsub('%s',''), w.subTotal}
 end
 
