@@ -32,7 +32,7 @@ local ret = {'',
 
 local function procesar(w)
     ret[#ret+1] = w.desc
-    ret[#ret+1] = campos{w.clave, w.qty, w.rea, w.prc, w.subTotal}
+    ret[#ret+1] = campos{w.clave, w.qty, w.rea, w.prc:gsub('%s',''), w.subTotal}
 end
 
 local function finish(w)
@@ -46,8 +46,9 @@ end
 
 local function ticket(w)
     if w.data then fd.reduce(w.data, procesar); finish(w) end
-    ret[#ret+1] = ''
+    ret[#ret+1] = string.format('\n%s', w.person:upper() or '')
     ret[#ret+1] = centrado'GRACIAS POR SU COMPRA'
+    ret[#ret+1] = '\27\100\7 \27\105'
     return table.concat(ret, '\n')
 end
 

@@ -67,3 +67,13 @@ local function lpr(data, pname)
 end
 
 return lpr
+
+--[[
+local function test(a)
+    local fs = require'carlos.files'
+    fs.dump('datos.txt', a)
+end
+
+return test
+
+--]]
