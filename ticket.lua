@@ -25,27 +25,27 @@ local ret = {'',
 	centrado'FERRETERIA Y REFACCIONES EN GENERAL',
 	centrado'Benito Juárez 1-C, Ocotlán, Oaxaca',
 	centrado'Tel. 57-10076',
---	centrado(os.date'%FT%T'),
+	centrado(os.date('%FT%T', mx())),
 	'',
 	campos({'CLAVE', 'CNT', '%', 'PRECIO', 'TOTAL'}),
 	''}
 
 local function procesar(w)
     ret[#ret+1] = w.desc
-    ret[#ret+1] = campos{w.clave, w.qty, w.rea, w.prc, w.total}
+    ret[#ret+1] = campos{w.clave, w.qty, w.rea, w.prc, w.subTotal}
 end
 
 local function finish(w)
     ret[1] = centrado(w.tag:upper())
     ret[#ret+1] = ''
     ret[#ret+1] = derecha(w.total)
-    ret[#ret+1] = w.person:upper()
+--    ret[#ret+1] = w.person:upper()
 end
 
 --{centrado('GRACIAS POR SU COMPRA')}
 
-local function ticket(data)
-    if data then fd.reduce(data, procesar); finish(data) end
+local function ticket(w)
+    if w.data then fd.reduce(w.data, procesar); finish(w) end
     ret[#ret+1] = ''
     ret[#ret+1] = centrado'GRACIAS POR SU COMPRA'
     return table.concat(ret, '\n')
