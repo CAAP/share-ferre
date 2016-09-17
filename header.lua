@@ -9,7 +9,15 @@ local status = {ok='200 OK'}
 
 local function hex(h) return string.char(tonumber(h,16)) end
 
-local function urldecode(s) return s:gsub("+", " "):gsub("%%(%x%x)", hex) end
+local function urldecode(s) return s:gsub("+", "|"):gsub("%%(%x%x)", hex) end
+
+function M.asJSON( w )
+    local ret = {}
+    for k,v in pairs(w) do
+	ret[#ret+1] = string.format('%q: %'..(tonumber(v) and 's' or 'q'), k , math.tointeger(v) or v)
+    end
+    return string.format( '{%s}', table.concat(ret, ', ') )
+end
 
 -- parse an application/x-www-form-urlencoded string
 function M.parse(q)
