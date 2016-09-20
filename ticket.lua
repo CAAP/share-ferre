@@ -20,6 +20,9 @@ local function campos(w)
     return table.concat(fd.reduce(w, fd.map(function(x,j) return string.format('%'..forth[j]..'s', x) end), fd.into, {}), '')
 end
 
+--{centrado('GRACIAS POR SU COMPRA')}
+
+local function ticket(w)
 local ret = {'',
 	centrado'FERRETERIA AGUILAR',
 	centrado'FERRETERIA Y REFACCIONES EN GENERAL',
@@ -43,9 +46,6 @@ local function finish(w)
 --    ret[#ret+1] = w.person:upper()
 end
 
---{centrado('GRACIAS POR SU COMPRA')}
-
-local function ticket(w)
     if w.datos then fd.reduce(w.datos, procesar); finish(w) end
     ret[#ret+1] = string.format('\n%s', w.person:upper() or '')
     ret[#ret+1] = centrado'GRACIAS POR SU COMPRA'
