@@ -25,18 +25,19 @@ local ret = {'',
 	centrado'FERRETERIA Y REFACCIONES EN GENERAL',
 	centrado'Benito Juárez 1-C, Ocotlán, Oaxaca',
 	centrado'Tel. 57-10076',
-	centrado(os.date('%FT%T', mx())),
+	'',
 	'',
 	campos({'CLAVE', 'CNT', '%', 'PRECIO', 'TOTAL'}),
 	''}
 
 local function procesar(w)
-    ret[#ret+1] = string.format('%38s', w.desc) -- w.desc
+    ret[#ret+1] = w.desc -- w.desc
     ret[#ret+1] = campos{w.clave, w.qty, w.rea, w.prc:gsub('%s',''), w.subTotal}
 end
 
 local function finish(w)
     ret[1] = centrado(w.tag:upper())
+    ret[6] = centrado(w.fecha or os.date('%FT%T', mx()))
     ret[#ret+1] = ''
     ret[#ret+1] = derecha(w.total)
 --    ret[#ret+1] = w.person:upper()
@@ -45,7 +46,7 @@ end
 --{centrado('GRACIAS POR SU COMPRA')}
 
 local function ticket(w)
-    if w.data then fd.reduce(w.data, procesar); finish(w) end
+    if w.datos then fd.reduce(w.datos, procesar); finish(w) end
     ret[#ret+1] = string.format('\n%s', w.person:upper() or '')
     ret[#ret+1] = centrado'GRACIAS POR SU COMPRA'
     ret[#ret+1] = '\27\100\7 \27\105'
