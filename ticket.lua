@@ -2,9 +2,10 @@
 
 local fd = require'carlos.fold'
 local mx = require'ferre.timezone'
+local letra = require'ferre.enpesos'
 
 local width = 38
-local forth = {6, 5, 4, 13, 10}
+local forth = {5, 7, 4, 12, 10}
 
 local function centrado(s)
     local m = s:len()
@@ -35,7 +36,7 @@ local ret = {'',
 
 local function procesar(w)
     ret[#ret+1] = w.desc -- w.desc
-    ret[#ret+1] = campos{w.clave, w.qty, w.rea, w.prc:gsub('%s',''), w.subTotal}
+    ret[#ret+1] = campos{w.clave, w.qty, w.rea, w.prc, w.subTotal}
 end
 
 local function finish(w)
@@ -43,6 +44,8 @@ local function finish(w)
     ret[6] = centrado(w.fecha or os.date('%FT%T', mx()))
     ret[#ret+1] = ''
     ret[#ret+1] = derecha(w.total)
+    if #w.total > width then local m = letra(w.total); ret[#ret+1] = m:sub(1, width); ret[#ret+1] = m:sub(width+1)
+    else ret[#ret+1] = letra(w.total) end
 --    ret[#ret+1] = w.person:upper()
 end
 
