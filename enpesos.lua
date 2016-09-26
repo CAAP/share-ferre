@@ -2,10 +2,9 @@ local int = math.tointeger
 
 local centenas = {'CIENTO', 'DOSCIENTOS', 'TRESCIENTOS', 'CUATROSCIENTOS', 'QUINIENTOS', 'SEISCIENTOS', 'SETECIENTOS', 'OCHOCIENTOS', 'NOVECIENTOS'}
 
-local unidades = {'UNO', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE', 'DIEZ', 'ONCE', 'DOCE', 'TRECE', 'CATORCE', 'QUINCE', 'DIECISEIS', 'DIECISIETE', 'DIECIOCHO', 'DIECINUEVE', 'VEINTE'}
-unidades[0] = 'ZERO'
+local unidades = {'UN', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE'}
 
-local decenas = {'', 'VEINTI', 'TREINTA Y', 'CUARENTA Y', 'CINCUENTA Y', 'SESENTA Y', 'SETENTA Y', 'OCHENTA Y', 'NOVENTA Y'}
+local decenas = {'', 'VEINTI', 'TREINTA Y', 'CUARENTA Y', 'CINCUENTA Y', 'SESENTA Y', 'SETENTA Y', 'OCHENTA Y', 'NOVENTA Y', 'DIEZ', 'ONCE', 'DOCE', 'TRECE', 'CATORCE', 'QUINCE', 'DIECISEIS', 'DIECISIETE', 'DIECIOCHO', 'DIECINUEVE', 'VEINTE'}
 
 local suffix = {}
 suffix[4] = 'MIL'; suffix[7] = 'MILLON'
@@ -20,31 +19,36 @@ local function enpesos(z)
 
     if N == 1 and y == '1' then return string.format('UN PESO %s/100 M.N.',c) end
     if N == 0 then return string.format('ZERO PESOS %s/100 M.N.') end
+    if N > 7 or (N==7 and digit(1) > 1) then suffix[7] = 'MILLONES' end
 
     y = y:reverse()
 
     while N > 0 do
 	local M = N%3
 	if M == 0 then ret[#ret+1] = centenas[digit(N)] end
-	if M == 1 then
-	    print(digit(N))
-	    ret[#ret+1] = digit(N) == 1 and 'UN' or unidades[digit(N)]
+	if M == 1 then -- uniddades
+	    ret[#ret+1] = unidades[digit(N)]
 	    if suffix[N] then ret[#ret+1] = suffix[N] end
 	end
-	if M == 2 then
+	if M == 2 then -- decenas
 	    local x = int(y:sub(N-1, N):reverse())
-	    if x == 20 then ret[#ret+1] = 'VEINTE'; N = N - 1
-	    elseif digit(N) == 2 then ret[#ret+1] = decenas[2]..(digit(N-1) == 1 and 'UN' or unidades[digit(N-1)]); N = N - 1
-	    elseif x>9 and unidades[x] then ret[#ret+1] = unidades[x]; N = N - 1
-	    else ret[#ret+1] = decenas[digit(N)] end
+	    if x>9 then
+		ret[#ret+1] = decenas[x] or ((x%10 == 0) and decenas[digit(N)]:gsub(' Y', '') or decenas[digit(N)])
+	    end
 	end
 	N = N - 1
     end
 
     ret[#ret+1] = string.format('PESOS %s/100 M.N.', c)
 
-    return table.concat(ret, ' ')
+    return table.concat(ret, ' '):gsub('VEINTI ','VEINTI')
 end
 
+local function test()
+    assert(enpesos'23.63' == 'VEINTITRES PESOS 63/100 M.N.')
+    assert(enpesos'2020.03' == 'DOS MIL VEINTE PESOS 03/100 M.N.')
+    assert(enpesos'1040.21' == 'UN MIL CUARENTA PESOS 21/100 M.N.')
+    assert(enpesos'2030153.12' == 'DOS MILLONES TREINTA MIL CIENTO CINCUENTA Y TRES 12/100 M.N.' )
+end
 
 return enpesos
