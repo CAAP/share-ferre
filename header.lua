@@ -16,7 +16,7 @@ function M.asJSON( w )
     for k,v in pairs(w) do
 	ret[#ret+1] = string.format('%q: %'..(tonumber(v) and 's' or 'q'), k , math.tointeger(v) or v)
     end
-    return string.format( '{%s}', table.concat(ret, ', ') )
+    return string.format( '{%s}', table.concat(ret, ', ') ):gsub('"%[', '['):gsub(']"',']'):gsub("'", '"')
 end
 
 -- parse an application/x-www-form-urlencoded string
