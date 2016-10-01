@@ -25,7 +25,7 @@ local function enpesos(z)
 
     while N > 0 do
 	local M = N%3
-	if M == 0 then ret[#ret+1] = centenas[digit(N)] end
+	if M == 0 then ret[#ret+1] = int(y:sub(N-2, N):reverse()) == 100 and 'CIEN' or centenas[digit(N)] end
 	if M == 1 then -- uniddades
 	    ret[#ret+1] = unidades[digit(N)]
 	    if suffix[N] then ret[#ret+1] = suffix[N] end
@@ -33,7 +33,9 @@ local function enpesos(z)
 	if M == 2 then -- decenas
 	    local x = int(y:sub(N-1, N):reverse())
 	    if x>9 then
-		ret[#ret+1] = decenas[x] or ((x%10 == 0) and decenas[digit(N)]:gsub(' Y', '') or decenas[digit(N)])
+		local p = decenas[x] or ((x%10 == 0) and decenas[digit(N)]:gsub(' Y', ''))
+		if p then ret[#ret+1] = p; N = N - 1 else ret[#ret+1] = decenas[digit(N)] end
+--		ret[#ret+1] = decenas[x] or ((x%10 == 0) and decenas[digit(N)]:gsub(' Y', '') or decenas[digit(N)])
 	    end
 	end
 	N = N - 1
@@ -45,6 +47,9 @@ local function enpesos(z)
 end
 
 local function test()
+    assert(enpesos'100.50' == 'CIEN PESOS 50/100 M.N.')
+    assert(enpesos'116.45' == 'CIENTO DIECISEIS PESOS 45/100 M.N.')
+    assert(enpesos'218.64' == 'DOSCIENTOS DIECIOCHO PESOS 64/100 M.N.')
     assert(enpesos'23.63' == 'VEINTITRES PESOS 63/100 M.N.')
     assert(enpesos'2020.03' == 'DOS MIL VEINTE PESOS 03/100 M.N.')
     assert(enpesos'1040.21' == 'UN MIL CUARENTA PESOS 21/100 M.N.')
