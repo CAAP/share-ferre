@@ -19,6 +19,15 @@ function M.asJSON( w )
     return string.format( '{%s}', table.concat(ret, ', ') ):gsub('"%[', '['):gsub(']"',']'):gsub("'", '"')
 end
 
+function M.args(keys, ...)
+    local ret = ...
+    return function(s)
+	local t = {unpack(ret)}
+	for k,v in s:gmatch'([^|]+)|([^|]+)' do if keys[k] then t[keys[k]] = v end end
+	return t
+    end
+end
+
 -- parse an application/x-www-form-urlencoded string
 function M.parse(q)
     local t = {args={}}
