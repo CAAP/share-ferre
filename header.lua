@@ -20,9 +20,9 @@ function M.asJSON( w )
 end
 
 function M.args(keys, ...)
-    local ret = ...
+    local ret = {...}
     return function(s)
-	local t = {unpack(ret)}
+	local t = {table.unpack(ret)}
 	for k,v in s:gmatch'([^|]+)|([^|]+)' do if keys[k] then t[keys[k]] = v end end
 	return t
     end
