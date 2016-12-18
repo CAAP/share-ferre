@@ -1,3 +1,3 @@
-local function now() return os.time()-18000 end
+local function now() return os.time()-21600 end -- 18000
 
 return now
