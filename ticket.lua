@@ -24,11 +24,11 @@ end
 --{centrado('GRACIAS POR SU COMPRA')}
 
 local function ticket(w)
-local ret = {'',
+local ret = {'\27\60', '',
 	centrado'FERRETERIA AGUILAR',
 	centrado'FERRETERIA Y REFACCIONES EN GENERAL',
-	centrado'Benito Juárez 1-C, Ocotlán, Oaxaca',
-	centrado'Tel. 57-10076',
+	centrado'Benito Ju\225rez 1-C, Ocotl\225n, Oaxaca',
+	centrado'Tel. (951) 57-10076',
 	'',
 	'',
 	campos({'CLAVE', 'CNT', '%', 'PRECIO', 'TOTAL'}),
@@ -40,8 +40,8 @@ local function procesar(w)
 end
 
 local function finish(w)
-    ret[1] = centrado(w.tag:upper())
-    ret[6] = centrado(w.fecha or os.date('%FT%T', mx()))
+    ret[2] = centrado(w.tag:upper())
+    ret[7] = centrado(w.fecha or os.date('%FT%T', mx()))
     ret[#ret+1] = ''
     ret[#ret+1] = derecha(w.total)
     if #w.total > width then local m = letra(w.total); ret[#ret+1] = m:sub(1, width); ret[#ret+1] = m:sub(width+1)
