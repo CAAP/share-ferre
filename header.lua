@@ -1,8 +1,11 @@
 local M = {}
 
+local post = 'POST %s HTTP/1.1\r\nHost: %s\r'
 local protocol = 'HTTP/1.1 %s\r'
 local access = 'Access-Control-Allow-Origin: %s\r\nAccess-Control-Allow-Methods: GET\r\n\r'
 local content = { text='Content-Type: text/plain\r',
+		  urlencoded='Content-Type: application/x-www-form-urlencoded\r',
+		  json='Content-Type: application/json\r\nConnection: keep-alive\r\nAccept: */*\r',
 		  stream='Content-Type: text/event-stream\r\nConnection: keep-alive\r\nCache-Control: no-cache\r' }
 
 local status = {ok='200 OK'}
@@ -45,16 +48,30 @@ function M.parse(q)
     return t
 end
 
+local function wrap(z)
+    local MM = {}
+    function MM.insert(s) z[#z+1] = s end
+    function MM.asstr() z[#z+1] = '\n'; return table.concat(z, '\n') end
+    return MM
+end
+
 -- w | status='ok', content='text', ip='*', [body]
 function M.response(w)
     local ret = { string.format(protocol, status[w.status] or status.ok),
 		  content[w.content] or content.text,
 		  string.format(access, w.ip or '*') }
     if w.body then ret[#ret+1] = w.body end
-    local MM = {}
-    function MM.insert(s) ret[#ret+1] = s end
-    function MM.asstr() ret[#ret+1] = '\n'; return table.concat(ret, '\n') end
-    return MM
+    return wrap(ret)
+end
+
+function M.post(w)
+    local k = w.url:find'/'
+    local ret = { string.format(post, w.url:sub(k), w.url:sub(1,k-1)),
+		  content[w.content] or content.urlencoded,
+		  string.format('Content-Length: %d\r\n\r', #w.body) }
+    ret[#ret+1] = w.body
+--    ret[#ret+1] = '\n'
+    return table.concat(ret, '\n')
 end
 
 function M.method(s) return s:match'GET /(%g+) HTTTP' end
