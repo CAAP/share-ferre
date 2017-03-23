@@ -6,7 +6,11 @@ local function now() return os.time()-21600 end -- 18000
 
 local function asweek(t) return os.date('Y%YW%U', t) end
 
-local function dbconn(path) return sql.connect(string.format('/db/%s.db', path)) end
+local function dbconn(path)
+    local f = string.format('/db/%s.db', path)
+    assert( io.open(f), string.format('File %q does not exists!', f) )
+    return sql.connect(f)
+end
 
 local function which( db )
     local conn = dbconn( db )

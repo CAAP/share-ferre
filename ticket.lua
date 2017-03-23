@@ -1,8 +1,8 @@
 #!/usr/local/bin/lua
 
 local fd = require'carlos.fold'
-local mx = require'ferre.timezone'
 local letra = require'ferre.enpesos'
+local precio = require'ferre.precio'
 
 local width = 38
 local forth = {5, 7, 4, 12, 10}
@@ -21,10 +21,8 @@ local function campos(w)
     return table.concat(fd.reduce(w, fd.map(function(x,j) return string.format('%'..forth[j]..'s', x) end), fd.into, {}), '')
 end
 
---{centrado('GRACIAS POR SU COMPRA')}
-
 local function ticket(w)
-local ret = {'\27\60', '',
+    local ret = {'\27\60', '',
 	centrado'FERRETERIA AGUILAR',
 	centrado'FERRETERIA Y REFACCIONES EN GENERAL',
 	centrado'Benito Ju\225rez 1-C, Ocotl\225n, Oaxaca',
@@ -32,22 +30,23 @@ local ret = {'\27\60', '',
 	'',
 	'',
 	campos({'CLAVE', 'CNT', '%', 'PRECIO', 'TOTAL'}),
-	''}
+	''
+    }
 
-local function procesar(w)
-    ret[#ret+1] = w.desc -- w.desc
-    ret[#ret+1] = campos{w.clave, w.qty, w.rea, w.prc, w.subTotal}
-end
+    local function procesar(w)
+	ret[#ret+1] = w.desc
+	ret[#ret+1] = campos{w.clave, w.qty, w.rea, w.prc, w.subTotal}
+    end
 
-local function finish(w)
-    ret[2] = centrado(w.tag:upper())
-    ret[7] = centrado(w.fecha or os.date('%FT%T', mx()))
-    ret[#ret+1] = ''
-    ret[#ret+1] = derecha(w.total)
-    if #w.total > width then local m = letra(w.total); ret[#ret+1] = m:sub(1, width); ret[#ret+1] = m:sub(width+1)
-    else ret[#ret+1] = letra(w.total) end
---    ret[#ret+1] = w.person:upper()
-end
+    local function finish(w)
+	local fecha, hora = w.uid:match('([^T]+)T([^P]+)')
+	ret[2] = centrado(w.tag:upper())
+	ret[7] = centrado(string.format('Fecha: %s | Hora: %s'), fecha, hora)
+	ret[#ret+1] = ''
+	ret[#ret+1] = derecha(w.total)
+	if #w.total > width then local m = letra(w.total); ret[#ret+1] = m:sub(1, width); ret[#ret+1] = m:sub(width+1)
+	else ret[#ret+1] = letra(w.total) end
+    end
 
     if w.datos then fd.reduce(w.datos, procesar); finish(w) end
     ret[#ret+1] = string.format('\n%s', w.person:upper() or '')
