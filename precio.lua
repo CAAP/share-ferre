@@ -1,7 +1,9 @@
 local fd = require'carlos.fold'
-local sql = require'carlos.sqlite'
 
-local function precio(w)
+local PRC = 'SELECT desc, precio%d ||"/"|| IFNULL(u%d,"?") prc FROM precios WHERE clave LIKE %q'
+
+local function precio(conn)
+    return function(w)
     local j = w.precio:sub(-1)
     w.clave = w.clave
     w.qty = w.qty
@@ -13,6 +15,7 @@ local function precio(w)
     end
     w.subTotal = string.format('%.2f', w.totalCents/100)
     return w
+    end
 end
 
 return precio
