@@ -41,7 +41,7 @@ local function ticket(w)
     local function finish(w)
 	local fecha, hora = w.uid:match('([^T]+)T([^P]+)')
 	ret[2] = centrado(w.tag:upper())
-	ret[7] = centrado(string.format('Fecha: %s | Hora: %s'), fecha, hora)
+	ret[7] = centrado(string.format('Fecha: %s | Hora: %s', fecha, hora))
 	ret[#ret+1] = ''
 	ret[#ret+1] = derecha(w.total)
 	if #w.total > width then local m = letra(w.total); ret[#ret+1] = m:sub(1, width); ret[#ret+1] = m:sub(width+1)
