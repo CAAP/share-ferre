@@ -8,8 +8,8 @@ local function precio(conn)
     return function(w)
     local j = w.precio:sub(-1)
     w.clave = int(w.clave)
-    w.qty = w.qty
-    w.rea = w.rea
+    w.qty = int(w.qty)
+    w.rea = int(w.rea)
     if not w.desc then
 	local ret = fd.first( conn.query(string.format(PRC, j, j, w.clave)), function(x) return x end )
 	w.desc = ret.desc

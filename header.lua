@@ -16,13 +16,17 @@ local function hex(h) return string.char(tonumber(h,16)) end
 
 local function urldecode(s) return s:gsub("+", "|"):gsub("%%(%x%x)", hex) end
 
-function M.asJSON( w )
+local function asJSON( w )
+--    assert(type(w) == 'table')
     local ret = {}
     for k,v in pairs(w) do
-	ret[#ret+1] = string.format('%q: %'..(tonumber(v) and 's' or 'q'), k , math.tointeger(v) or v)
+	local u = type(v) == 'table' and asJSON(v) or (math.tointeger(v) or v)
+	ret[#ret+1] = string.format('%q: %'..(tonumber(u) and 's' or 'q'), k, u)
     end
     return string.format( '{%s}', table.concat(ret, ', ') ):gsub('"%[', '['):gsub(']"',']'):gsub("'", '"')
 end
+
+M.asJSON = asJSON
 
 function M.args(keys, ...)
     local ret = {...}
