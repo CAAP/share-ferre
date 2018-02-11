@@ -2,7 +2,6 @@
 
 local fd = require'carlos.fold'
 local letra = require'ferre.enpesos'
-local precio = require'ferre.precio'
 
 local width = 38
 local forth = {5, 7, 4, 12, 10}
@@ -36,6 +35,7 @@ local function ticket(w)
     local function procesar(w)
 	ret[#ret+1] = w.desc
 	ret[#ret+1] = campos{w.clave, w.qty, w.rea, w.prc, w.subTotal}
+	if w.uidSAT then ret[#ret+1] = w.uidSAT end
     end
 
     local function finish(w)
