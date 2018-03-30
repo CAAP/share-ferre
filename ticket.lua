@@ -44,6 +44,7 @@ local function ticket(w)
 	ret[7] = centrado(string.format('Fecha: %s | Hora: %s', fecha, hora))
 	ret[#ret+1] = ''
 	ret[#ret+1] = derecha(w.total)
+	if w.iva then ret[#ret+1] = derecha(w.iva) end
 	if #w.total > width then local m = letra(w.total); ret[#ret+1] = m:sub(1, width); ret[#ret+1] = m:sub(width+1)
 	else ret[#ret+1] = letra(w.total) end
     end
