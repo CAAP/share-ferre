@@ -28,14 +28,16 @@ local function ticket(w)
 	centrado'Tel. (951) 57-10076',
 	'',
 	'',
-	campos({'CLAVE', 'CNT', '%', 'PRECIO', 'TOTAL'}),
+	campos{'CLAVE', 'CNT', '%', 'PRECIO', 'TOTAL'},
 	''
     }
 
     local function procesar(w)
 	ret[#ret+1] = w.desc
 	ret[#ret+1] = campos{w.clave, w.qty, w.rea, w.prc, w.subTotal}
-	if w.uidSAT then ret[#ret+1] = w.uidSAT end
+	if w.uidSAT then
+	    ret[#ret+1] = campos{math.tointeger(w.uidSAT), '', '', '', ''}
+        end
     end
 
     local function finish(w)
@@ -44,7 +46,10 @@ local function ticket(w)
 	ret[7] = centrado(string.format('Fecha: %s | Hora: %s', fecha, hora))
 	ret[#ret+1] = ''
 	ret[#ret+1] = derecha(w.total)
-	if w.iva then ret[#ret+1] = derecha(w.iva) end
+	if w.iva then
+	    ret[#ret+1] = derecha(string.format('I.V.A.   %s', w.iva))
+	    return
+        end
 	if #w.total > width then local m = letra(w.total); ret[#ret+1] = m:sub(1, width); ret[#ret+1] = m:sub(width+1)
 	else ret[#ret+1] = letra(w.total) end
     end
