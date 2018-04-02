@@ -36,7 +36,7 @@ local function ticket(w)
 	ret[#ret+1] = w.desc
 	ret[#ret+1] = campos{w.clave, w.qty, w.rea, w.prc, w.subTotal}
 	if w.uidSAT then
-	    ret[#ret+1] = campos{math.tointeger(w.uidSAT), '', '', '', ''}
+	    ret[#ret+1] = campos{w.uidSAT > 0 and math.tointeger(w.uidSAT) or 'XXXXX', '', '', '', ''}
         end
     end
 
@@ -47,6 +47,7 @@ local function ticket(w)
 	ret[#ret+1] = ''
 	ret[#ret+1] = derecha(w.total)
 	if w.iva then
+	    table.remove(ret, 3); table.remove(ret, 3); table.remove(ret, 3); table.remove(ret, 3); table.remove(ret, 3)
 	    ret[#ret+1] = derecha(string.format('I.V.A.   %s', w.iva))
 	    return
         end
