@@ -1,6 +1,7 @@
 local fd = require'carlos.fold'
 
-local PRC = 'SELECT desc, precio%d ||"/"|| IFNULL(u%d,"?") prc FROM precios WHERE clave LIKE %q'
+local PRC = 'SELECT desc, precio%d prc, IFNULL(u%d,"?") unit FROM precios WHERE clave LIKE %q'
+--local PRC = 'SELECT desc, precio%d ||"/"|| IFNULL(u%d,"?") prc FROM precios WHERE clave LIKE %q'
 
 local function int(s) return (math.tointeger(s) or s) end
 
@@ -13,7 +14,9 @@ local function precio(conn)
     if not w.desc then
 	local ret = fd.first( conn.query(string.format(PRC, j, j, w.clave)), function(x) return x end )
 	w.desc = ret.desc
-	w.prc = ret.prc
+	w.prc = string.format('%s/%s', ret.prc, ret.unit)
+	w.bruto = ret.prc/1.16
+	w.unit = ret.unit
     end
     w.subTotal = string.format('%.2f', w.totalCents/100)
     return w
