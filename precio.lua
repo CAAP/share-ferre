@@ -15,7 +15,7 @@ local function precio(conn)
 	local ret = fd.first( conn.query(string.format(PRC, j, j, w.clave)), function(x) return x end )
 	w.desc = ret.desc
 	w.prc = string.format('%s/%s', ret.prc, ret.unit)
-	w.bruto = ret.prc/1.16
+	w.bruto = ret.prc*(100-w.rea)/116
 	w.unit = ret.unit
     end
     w.subTotal = string.format('%.2f', w.totalCents/100)
