@@ -49,6 +49,7 @@ local function ticket(w)
 	if w.iva then
 	    table.remove(ret, 3); table.remove(ret, 3); table.remove(ret, 3); table.remove(ret, 3); table.remove(ret, 3)
 	    ret[#ret+1] = derecha(string.format('I.V.A.   %s', w.iva))
+	    ret[#ret+1] = derecha(string.format('TOTAL    %s', w.ttotal))
 	    return
         end
 	if #w.total > width then local m = letra(w.total); ret[#ret+1] = m:sub(1, width); ret[#ret+1] = m:sub(width+1)
