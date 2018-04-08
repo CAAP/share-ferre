@@ -35,9 +35,11 @@ local function ticket(w)
     local function procesar(w)
 	ret[#ret+1] = w.desc
 	ret[#ret+1] = campos{w.clave, w.qty, w.rea, w.prc, w.subTotal}
+	if (w.uidSAT) then
 	    local uid = math.tointeger(w.uidSAT) or 0
 	    uid = uid>0 and uid or 'XXXXX'
 	    ret[#ret+1] = campos{uid, '', '', '', ''}
+	end
     end
 
     local function finish(w)
